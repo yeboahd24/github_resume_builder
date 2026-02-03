@@ -130,14 +130,32 @@ func (s *ResumeService) selectTopProjects(rankedRepos []model.RankedRepository, 
 	projects := make([]model.ResumeProject, count)
 	for i := 0; i < count; i++ {
 		repo := rankedRepos[i]
+		
+		// Try to enhance with LLM
+		description := repo.Description
+		highlights := repo.Highlights
+		
+		if enhancedDesc, enhancedHighlights, err := s.llmClient.EnhanceProjectDescription(
+			context.Background(),
+			repo.Name,
+			repo.Description,
+			repo.Language,
+			repo.Topics,
+		); err == nil && enhancedDesc != "" {
+			description = enhancedDesc
+			if len(enhancedHighlights) > 0 {
+				highlights = enhancedHighlights
+			}
+		}
+		
 		projects[i] = model.ResumeProject{
 			RepoName:    repo.Name,
-			Description: repo.Description,
+			Description: description,
 			URL:         repo.URL,
 			Stars:       repo.Stars,
 			Language:    repo.Language,
 			Topics:      repo.Topics,
-			Highlights:  repo.Highlights,
+			Highlights:  highlights,
 			Position:    i,
 		}
 	}
