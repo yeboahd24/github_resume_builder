@@ -121,6 +121,7 @@ func run() error {
 
 	r.Get("/auth/login", authHandler.Login)
 	r.Get("/auth/callback", authHandler.Callback)
+	r.Get("/auth/github/callback", authHandler.Callback) // GitHub OAuth callback
 
 	// Protected routes
 	r.Group(func(r chi.Router) {

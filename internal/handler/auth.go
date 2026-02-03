@@ -69,10 +69,9 @@ func (h *AuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	respondJSON(w, http.StatusOK, map[string]interface{}{
-		"token": token,
-		"user":  user,
-	})
+	// Redirect to frontend with token
+	frontendURL := "http://localhost:5173" // Change to production URL when deployed
+	http.Redirect(w, r, frontendURL+"/callback?token="+token, http.StatusTemporaryRedirect)
 }
 
 func generateState() string {
