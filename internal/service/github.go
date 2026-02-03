@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/redis/go-redis/v9"
 	"github.com/yourusername/resume-builder/internal/client"
 	"github.com/yourusername/resume-builder/internal/model"
 )
