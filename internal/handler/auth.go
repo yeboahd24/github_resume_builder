@@ -72,7 +72,8 @@ func (h *AuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect to frontend with token
-	http.Redirect(w, r, h.frontendURL+"/callback?token="+token, http.StatusTemporaryRedirect)
+	redirectURL := h.frontendURL + "/callback?token=" + token
+	http.Redirect(w, r, redirectURL, http.StatusTemporaryRedirect)
 }
 
 func generateState() string {
