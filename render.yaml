@@ -1,0 +1,37 @@
+services:
+  - type: web
+    name: resume-builder
+    env: go
+    buildCommand: go build -o bin/main cmd/api/main.go
+    startCommand: ./bin/main
+    envVars:
+      - key: PORT
+        sync: false
+      - key: ENV
+        value: production
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_USER
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      - key: DB_NAME
+        sync: false
+      - key: DB_SSLMODE
+        value: require
+      - key: GITHUB_CLIENT_ID
+        sync: false
+      - key: GITHUB_CLIENT_SECRET
+        sync: false
+      - key: GITHUB_REDIRECT_URL
+        sync: false
+      - key: ENCRYPTION_KEY
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: REDIS_ENABLED
+        value: false
+      - key: OPENAI_ENABLED
+        value: false
