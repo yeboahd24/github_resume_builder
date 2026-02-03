@@ -15,7 +15,16 @@ export default function ResumeDetail() {
   const loadResume = async () => {
     try {
       const data = await resumeService.get(Number(id));
-      setResume(data);
+      // Normalize field names
+      const normalized = data ? {
+        id: data.ID,
+        title: data.Title,
+        target_role: data.TargetRole,
+        summary: data.Summary,
+        projects: data.Projects,
+        skills: data.Skills,
+      } : null;
+      setResume(normalized);
     } catch (error) {
       console.error('Failed to load resume:', error);
     } finally {

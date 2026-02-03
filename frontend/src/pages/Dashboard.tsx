@@ -16,9 +16,20 @@ export default function Dashboard() {
   const loadResumes = async () => {
     try {
       const data = await resumeService.list();
-      console.log('Resumes data:', data);
-      console.log('First resume:', data?.[0]);
-      setResumes(data || []);
+      // Map backend field names (uppercase) to frontend (lowercase)
+      const normalizedData = data?.map((resume: any) => ({
+        id: resume.ID,
+        user_id: resume.UserID,
+        title: resume.Title,
+        target_role: resume.TargetRole,
+        summary: resume.Summary,
+        projects: resume.Projects,
+        skills: resume.Skills,
+        is_default: resume.IsDefault,
+        created_at: resume.CreatedAt,
+        updated_at: resume.UpdatedAt,
+      }));
+      setResumes(normalizedData || []);
     } catch (error) {
       console.error('Failed to load resumes:', error);
     } finally {
@@ -109,7 +120,6 @@ export default function Dashboard() {
                   <p className="text-sm text-gray-500">
                     Created: {resume.created_at ? new Date(resume.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Recently'}
                   </p>
-                  <p className="text-xs text-gray-400 mt-2">ID: {JSON.stringify(resume.id)} | Full: {JSON.stringify(resume).substring(0, 100)}</p>
                 </div>
               ))
             )}
