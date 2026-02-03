@@ -11,12 +11,14 @@ import (
 type AuthHandler struct {
 	authService *service.AuthService
 	jwtService  *service.JWTService
+	frontendURL string
 }
 
-func NewAuthHandler(authService *service.AuthService, jwtService *service.JWTService) *AuthHandler {
+func NewAuthHandler(authService *service.AuthService, jwtService *service.JWTService, frontendURL string) *AuthHandler {
 	return &AuthHandler{
 		authService: authService,
 		jwtService:  jwtService,
+		frontendURL: frontendURL,
 	}
 }
 
@@ -70,8 +72,7 @@ func (h *AuthHandler) Callback(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Redirect to frontend with token
-	frontendURL := "http://localhost:5173" // Change to production URL when deployed
-	http.Redirect(w, r, frontendURL+"/callback?token="+token, http.StatusTemporaryRedirect)
+	http.Redirect(w, r, h.frontendURL+"/callback?token="+token, http.StatusTemporaryRedirect)
 }
 
 func generateState() string {

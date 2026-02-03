@@ -99,7 +99,8 @@ func run() error {
 	resumeService := service.NewResumeService(resumeRepo, userRepo, githubService, rankingService, llmClient)
 
 	// Initialize handlers
-	authHandler := handler.NewAuthHandler(authService, jwtService)
+	frontendURL := getEnv("FRONTEND_URL", "http://localhost:5173")
+	authHandler := handler.NewAuthHandler(authService, jwtService, frontendURL)
 	resumeHandler := handler.NewResumeHandler(resumeService, authService)
 	authMiddleware := handler.NewAuthMiddleware(jwtService, logger)
 
@@ -112,6 +113,20 @@ func run() error {
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Timeout(60 * time.Second))
 	r.Use(httprate.LimitByIP(100, 1*time.Minute))
+
+	// CORS middleware
+	r.Use(func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			w.Header().Set("Access-Control-Allow-Origin", "*")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers", "Content-Type, Authorization")
+			if r.Method == "OPTIONS" {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+			next.ServeHTTP(w, r)
+		})
+	})
 
 	// Public routes
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
@@ -173,4 +188,11 @@ func run() error {
 	}
 
 	return nil
+}
+
+func getEnv(key, defaultValue string) string {
+	if value := os.Getenv(key); value != "" {
+		return value
+	}
+	return defaultValue
 }
