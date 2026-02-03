@@ -61,6 +61,10 @@ export default function ResumeDetail() {
     document.body.removeChild(element);
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -89,6 +93,12 @@ export default function ResumeDetail() {
           </button>
           <div className="flex gap-4">
             <button
+              onClick={handlePrint}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg"
+            >
+              Print/PDF
+            </button>
+            <button
               onClick={handleExport}
               className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg"
             >
@@ -105,20 +115,22 @@ export default function ResumeDetail() {
       </nav>
 
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-8">
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-2">{resume.title}</h1>
-            <p className="text-xl text-gray-600 mb-4">{resume.target_role}</p>
-            <p className="text-gray-700 leading-relaxed">{resume.summary}</p>
+        <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-12 print:shadow-none">
+          {/* Header */}
+          <div className="mb-8 pb-6 border-b-2 border-gray-200">
+            <h1 className="text-4xl font-bold mb-2 text-gray-900">{resume.title}</h1>
+            <p className="text-2xl text-indigo-600 font-semibold mb-3">{resume.target_role}</p>
+            <p className="text-gray-700 leading-relaxed text-lg">{resume.summary}</p>
           </div>
 
+          {/* Skills */}
           <div className="mb-8">
-            <h2 className="text-2xl font-semibold mb-4">Skills</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900 uppercase tracking-wide">Technical Skills</h2>
             <div className="flex flex-wrap gap-2">
-              {resume.skills?.map((skill: string, index: number) => (
+              {resume.skills?.slice(0, 12).map((skill: string, index: number) => (
                 <span
                   key={index}
-                  className="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-full text-sm"
+                  className="bg-indigo-50 text-indigo-700 px-4 py-2 rounded-md text-sm font-medium border border-indigo-200"
                 >
                   {skill}
                 </span>
@@ -126,31 +138,53 @@ export default function ResumeDetail() {
             </div>
           </div>
 
+          {/* Projects */}
           <div>
-            <h2 className="text-2xl font-semibold mb-4">Projects</h2>
+            <h2 className="text-2xl font-bold mb-6 text-gray-900 uppercase tracking-wide">Key Projects</h2>
             <div className="space-y-6">
               {resume.projects?.map((project: any, index: number) => (
-                <div key={index} className="border-l-4 border-indigo-500 pl-4">
-                  <h3 className="text-xl font-semibold mb-2">
-                    <a
-                      href={project.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-indigo-600 hover:underline"
-                    >
-                      {project.repo_name}
-                    </a>
-                  </h3>
-                  <p className="text-gray-700 mb-2">{project.description}</p>
-                  <div className="flex items-center gap-4 text-sm text-gray-600">
-                    <span>⭐ {project.stars}</span>
-                    <span>{project.language}</span>
+                <div key={index} className="border-l-4 border-indigo-600 pl-6 py-2">
+                  <div className="flex items-start justify-between mb-2">
+                    <h3 className="text-xl font-bold text-gray-900">
+                      <a
+                        href={project.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-indigo-600 hover:text-indigo-800 hover:underline"
+                      >
+                        {project.repo_name}
+                      </a>
+                    </h3>
+                    <div className="flex items-center gap-3 text-sm text-gray-600">
+                      {project.stars > 0 && <span className="font-semibold">⭐ {project.stars}</span>}
+                      {project.language && (
+                        <span className="bg-gray-100 px-2 py-1 rounded text-xs font-medium">
+                          {project.language}
+                        </span>
+                      )}
+                    </div>
                   </div>
+                  
+                  {project.description && (
+                    <p className="text-gray-700 mb-3 leading-relaxed">{project.description}</p>
+                  )}
+                  
+                  {project.topics?.length > 0 && (
+                    <div className="flex flex-wrap gap-2 mb-2">
+                      {project.topics.slice(0, 5).map((topic: string, i: number) => (
+                        <span key={i} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
+                          #{topic}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                  
                   {project.highlights?.length > 0 && (
-                    <ul className="mt-2 space-y-1">
+                    <ul className="mt-3 space-y-1">
                       {project.highlights.map((highlight: string, i: number) => (
-                        <li key={i} className="text-sm text-gray-600">
-                          • {highlight}
+                        <li key={i} className="text-sm text-gray-600 flex items-start">
+                          <span className="mr-2 text-indigo-600">▸</span>
+                          <span>{highlight}</span>
                         </li>
                       ))}
                     </ul>
@@ -158,6 +192,11 @@ export default function ResumeDetail() {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Footer */}
+          <div className="mt-8 pt-6 border-t border-gray-200 text-center text-sm text-gray-500">
+            <p>Generated from GitHub profile • {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
           </div>
         </div>
       </div>
