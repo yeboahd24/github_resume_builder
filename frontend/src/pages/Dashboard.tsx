@@ -105,7 +105,7 @@ export default function Dashboard() {
                   <h3 className="text-xl font-semibold mb-2">{resume.title}</h3>
                   <p className="text-gray-600 mb-2">{resume.target_role}</p>
                   <p className="text-sm text-gray-500">
-                    Created: {new Date(resume.created_at).toLocaleDateString()}
+                    Created: {resume.created_at ? new Date(resume.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Recently'}
                   </p>
                 </div>
               ))
