@@ -102,11 +102,12 @@ export default function Dashboard() {
                   className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition cursor-pointer"
                   onClick={() => navigate(`/resume/${resume.id}`)}
                 >
-                  <h3 className="text-xl font-semibold mb-2">{resume.title}</h3>
-                  <p className="text-gray-600 mb-2">{resume.target_role}</p>
+                  <h3 className="text-xl font-semibold mb-2">{resume.title || 'Untitled Resume'}</h3>
+                  <p className="text-gray-600 mb-2">{resume.target_role || 'No role specified'}</p>
                   <p className="text-sm text-gray-500">
                     Created: {resume.created_at ? new Date(resume.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Recently'}
                   </p>
+                  <p className="text-xs text-gray-400 mt-2">ID: {resume.id}</p>
                 </div>
               ))
             )}
