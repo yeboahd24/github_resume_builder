@@ -15,13 +15,21 @@ export default function ResumeDetail() {
   const loadResume = async () => {
     try {
       const data = await resumeService.get(Number(id));
-      // Normalize field names
+      // Normalize field names and nested objects
       const normalized = data ? {
         id: data.ID,
         title: data.Title,
         target_role: data.TargetRole,
         summary: data.Summary,
-        projects: data.Projects,
+        projects: data.Projects?.map((p: any) => ({
+          repo_name: p.RepoName,
+          description: p.Description,
+          url: p.URL,
+          stars: p.Stars,
+          language: p.Language,
+          topics: p.Topics,
+          highlights: p.Highlights,
+        })),
         skills: data.Skills,
       } : null;
       setResume(normalized);
@@ -41,6 +49,16 @@ export default function ResumeDetail() {
         console.error('Failed to delete resume:', error);
       }
     }
+  };
+
+  const handleExport = () => {
+    const element = document.createElement('a');
+    const file = new Blob([JSON.stringify(resume, null, 2)], { type: 'application/json' });
+    element.href = URL.createObjectURL(file);
+    element.download = `${resume.title.replace(/\s+/g, '_')}_resume.json`;
+    document.body.appendChild(element);
+    element.click();
+    document.body.removeChild(element);
   };
 
   if (loading) {
@@ -69,12 +87,20 @@ export default function ResumeDetail() {
           >
             ← Back to Dashboard
           </button>
-          <button
-            onClick={handleDelete}
-            className="text-red-600 hover:text-red-700"
-          >
-            Delete
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={handleExport}
+              className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg"
+            >
+              Export JSON
+            </button>
+            <button
+              onClick={handleDelete}
+              className="text-red-600 hover:text-red-700 px-4 py-2"
+            >
+              Delete
+            </button>
+          </div>
         </div>
       </nav>
 
